@@ -5,6 +5,8 @@ import messageRoutes from './routes/message.routes.js';
 import path from 'path';
 import { connectDB } from './lib/db.js';
 
+console.log("CURRENT DIR:", process.cwd());
+
 dotenv.config();
 
 const app = express();  
@@ -24,8 +26,8 @@ if(process.env.NODE_ENV === "production"){
     });
 }
 
-
-app.listen(PORT, () => {
-    console.log('Server is running on port ' + PORT);
-    connectDB();
-}); 
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log('Server is running on port ' + PORT);
+    });
+});
