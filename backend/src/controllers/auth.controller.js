@@ -31,15 +31,18 @@ export const signup = async (req, res) => {
             password: hashedPassword
         });
 
-        generateToken(newUser._id, res);
-        await newUser.save();
-
-        res.status(201).json({
-            _id: newUser._id,
-            fullName: newUser.fullName,
-            email: newUser.email,
-            profilePic: newUser.profilePic,
-        });
+        if(newUser){
+            const savedUser = await newUser.save();
+            generateToken(newUser._id, res);
+            res.status(201).json({
+                _id: newUser._id,
+                fullName: newUser.fullName,
+                email: newUser.email,
+                profilePic: newUser.profilePic,
+            });
+        }else{
+            res.status(400).json({message: "Invalid user data"});
+        }
     }
     catch(error){
         console.error(error);
