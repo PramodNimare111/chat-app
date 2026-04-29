@@ -4,6 +4,8 @@ import authRoutes from './routes/auth.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import path from 'path';
 import { connectDB } from './lib/db.js';
+import dns from "dns"
+dns.setServers(["1.1.1.1","8.8.8.8"]);
 
 console.log("CURRENT DIR:", process.cwd());
 
