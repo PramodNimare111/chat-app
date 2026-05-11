@@ -1,9 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.routes.js';
+import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from './routes/message.routes.js';
 import path from 'path';
 import { connectDB } from './lib/db.js';
+import cookieParser from "cookie-parser"
 import dns from "dns"
 dns.setServers(["1.1.1.1","8.8.8.8"]);
 
@@ -16,6 +17,7 @@ const __dirname = path.resolve();
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json()); //middleware to parse json data from request body
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
