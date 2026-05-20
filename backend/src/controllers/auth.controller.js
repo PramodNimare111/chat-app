@@ -4,7 +4,7 @@ import { generateToken } from "../lib/utils.js";
 import "dotenv/config";
 import {ENV} from "../lib/env.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
-import {cloudinary} from "../lib/cloudinary.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
     const { fullName, email, password } = req.body;
