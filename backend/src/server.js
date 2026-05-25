@@ -1,37 +1,35 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import authRoutes from "./routes/auth.routes.js";
-import messageRoutes from './routes/message.routes.js';
-import path from 'path';
-import { connectDB } from './lib/db.js';
-import cookieParser from "cookie-parser"
-import dns from "dns"
-dns.setServers(["1.1.1.1","8.8.8.8"]);
+import express from "express";
+import cookieParser from "cookie-parser";
+import path from "path";
+import cors from "cors";
 
-console.log("CURRENT DIR:", process.cwd());
+import authRoutes from "./routes/auth.route.js";
+import messageRoutes from "./routes/message.route.js";
+import { connectDB } from "./lib/db.js";
+import { ENV } from "./lib/env.js";
+import { app, server } from "./lib/socket.js";
 
-dotenv.config();
-
-const app = express();  
 const __dirname = path.resolve();
 
-const PORT = process.env.PORT || 3000;
-app.use(express.json()); //middleware to parse json data from request body
+const PORT = ENV.PORT || 3000;
+
+app.use(express.json({ limit: "5mb" })); // req.body
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
-// make ready for deployement
-if(process.env.NODE_ENV === "production"){
-    app.use(express.static(path.join(__dirname, "../frontend/build")));
-    app.use((req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend","dist","index.html"));
-    });
+// make ready for deployment
+if (ENV.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (_, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
 }
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log('Server is running on port ' + PORT);
-    });
+server.listen(PORT, () => {
+  console.log("Server running on port: " + PORT);
+  connectDB();
 });
